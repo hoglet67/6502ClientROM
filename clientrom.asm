@@ -65,14 +65,14 @@ L0237   = $0237
 .RESET
         LDX     #$00
 .LF802
-        LDA     LFF00,X
-        STA     LFF00,X
+        LDA     $FF00,X
+        STA     $FF00,X
         DEX
         BNE     LF802
 
         LDX     #$36
 .LF80D
-        LDA     LFF80,X
+        LDA     $FF80,X
         STA     L0200,X
         DEX
         BPL     LF80D
@@ -80,8 +80,8 @@ L0237   = $0237
         TXS
         LDX     #$F0
 .LF819
-        LDA     LFDFF,X
-        STA     LFDFF,X
+        LDA     $FDFF,X
+        STA     $FDFF,X
         DEX
         BNE     LF819
 
@@ -415,7 +415,7 @@ LF85F = LF85D+2
 
         EQUS    $0A,$0D,"6502 TUBE 1.10",$0A,$0D
 
-        EQUB    $EA
+        NOP
 
 .LFA2D
         LDA     #$02
@@ -741,7 +741,6 @@ LF85F = LF85D+2
 .LFBE1
         JSR     LFC4A
 
-NMI = LFBE1+2
         LDA     L0001,X
         JSR     LFC4A
 
@@ -1078,7 +1077,10 @@ NMI = LFBE1+2
         AND     #$80
         BPL     LFDCF
 
+.LFDD6
         LDA     LFFFF,Y
+LFDD7 = LFDD6+1
+
         STA     R3DATA
         INY
         BNE     LFDCF
@@ -1102,14 +1104,16 @@ NMI = LFBE1+2
         BPL     LFDEE
 
         LDA     R3DATA
+.LFDF8
         STA     LFFFF,Y
+LFDF9 = LFDF8+1
         INY
         BNE     LFDEE
 
 .LFDFE
         BEQ     LFDE7
 
-LFDFF = LFDFE+1
+.LFE00
         PHA
 .LFE01
         LDA     LFFFF
@@ -1124,6 +1128,7 @@ LFE03 = LFE01+2
         PLA
         RTI
 
+.LFE11
         PHA
         LDA     R3DATA
 .LFE15
@@ -1138,6 +1143,7 @@ LFE17 = LFE15+2
         PLA
         RTI
 
+.LFE22
         PHA
         TYA
         PHA
@@ -1161,6 +1167,7 @@ LFE17 = LFE15+2
         PLA
         RTI
 
+.LFE41
         PHA
         TYA
         PHA
@@ -1185,16 +1192,44 @@ LFE17 = LFE15+2
         RTI
 
 .LFE60
-        EQUB    $02,$16,$F6,$F6,$F6,$F6,$D7,$F9
+        EQUB    <LFE02
+        EQUB    <LFE16
+        EQUB    <L00F6
+        EQUB    <L00F6
+        EQUB    <L00F6
+        EQUB    <L00F6
+        EQUB    <LFDD7
+        EQUB    <LFDF9
 
 .LFE68
-        EQUB    $FE,$FE,$00,$00,$00,$00,$FD,$FD
+        EQUB    >LFE02
+        EQUB    >LFE16
+        EQUB    >L00F6
+        EQUB    >L00F6
+        EQUB    >L00F6
+        EQUB    >L00F6
+        EQUB    >LFDD7
+        EQUB    >LFDF9
 
 .LFE70
-        EQUB    $00,$11,$22,$41,$B3,$B3,$B3,$B3
+        EQUB    <LFE00
+        EQUB    <LFE11
+        EQUB    <LFE22
+        EQUB    <LFE41
+        EQUB    <NMI
+        EQUB    <NMI
+        EQUB    <NMI
+        EQUB    <NMI
 
 .LFE78
-        EQUB    $FE,$FE,$FE,$FE,$FE,$FE,$FE,$FE
+        EQUB    >LFE00
+        EQUB    >LFE11
+        EQUB    >LFE22
+        EQUB    >LFE41
+        EQUB    >NMI
+        EQUB    >NMI
+        EQUB    >NMI
+        EQUB    >NMI
 
 .LFE80
         BIT     R1STATUS
@@ -1236,7 +1271,7 @@ LFE17 = LFE15+2
 .LFEB0
         JMP     (L00FA)
 
-.LFEB3
+.NMI
         STA     R3DATA
         RTI
 
@@ -1360,7 +1395,7 @@ LFE17 = LFE15+2
         JMP     (CLIVLO)
 
 .LFFFA
-        EQUW    LFEB3
+        EQUW    NMI
 
         LFFFB   = LFFFA+1
 .LFFFC
