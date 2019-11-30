@@ -85,9 +85,9 @@ L0237   = $0237
         DEX
         BNE     LF819
 
-        LDY     #$00
+        LDY     #<RESET
         STY     L00F8
-        LDA     #$F8
+        LDA     #>RESET
         STA     L00F9
 .LF82A
         LDA     (L00F8),Y
@@ -111,10 +111,10 @@ L0237   = $0237
         STA     L00F6
         LDA     L00EF
         STA     L00F7
-        LDA     #$00
+        LDA     #<RESET
         STA     L00FF
         STA     L00F2
-        LDA     #$F8
+        LDA     #>RESET
         STA     L00F3
         JMP     L0100
 
@@ -133,9 +133,9 @@ LF85F = LF85D+2
 
 .LF87B
         NOP
-        LDA     #$8D
+        LDA     #<LF88D
         STA     LF85E
-        LDA     #$F8
+        LDA     #>LF88D
         STA     LF85F
         JSR     LF975
 
@@ -146,8 +146,8 @@ LF85F = LF85D+2
         LDA     #$2A
         JSR     OSWRCH
 
-        LDX     #$5D
-        LDY     #$F9
+        LDX     #<LF95D
+        LDY     #>LF95D
         LDA     #$00
         JSR     OSWORD
 
@@ -219,9 +219,9 @@ LF85F = LF85D+2
         JMP     (L00F2)
 
 .LF8FF
-        LDA     #$45
+        LDA     #<LF945
         STA     BRKVLO
-        LDA     #$F9
+        LDA     #>LF945
         STA     BRKVHI
         BRK
         EQUB    $00
@@ -231,9 +231,9 @@ LF85F = LF85D+2
         EQUB    $00
 
 .LF922
-        LDA     #$45
+        LDA     #<LF945
         STA     BRKVLO
-        LDA     #$F9
+        LDA     #>LF945
         STA     BRKVHI
         BRK
         EQUB    $00
@@ -262,7 +262,9 @@ LF85F = LF85D+2
 
         JMP     LF88D
 
-        EQUB    $36,$02,$CA,$20,$FF
+.LF95D
+        EQUW    L0236
+        EQUB    $CA,$20,$FF
 
 .LF962
         BIT     R1STATUS
