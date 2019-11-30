@@ -1,6 +1,8 @@
 ; Enable 65C02 opcodes
 CPU           1
 
+_TURBO_ = -1
+
 L0000   = $0000
 L0001   = $0001
 L0002   = $0002
@@ -126,10 +128,20 @@ L0237   = $0237
 
 LF85E = LF85D+1
 LF85F = LF85D+2
+
+IF _TURBO_
+.TURFLAG                    ;; flag that indicates current program is a turbo program
+        EQUB    $00
+ENDIF
+
 .LF860
         JSR     LFE98
 
+IF _TURBO_
+        EQUS    $0A,"Acorn TUBE 6502 256K",$0A,$0A,$0D,$00
+ELSE
         EQUS    $0A,"Acorn TUBE 6502 64K",$0A,$0A,$0D,$00
+ENDIF
 
 .LF87B
         NOP
@@ -211,8 +223,24 @@ LF85F = LF85D+2
         CMP     #$40
         BCC     LF8FF
 
+IF _TURBO_
+        AND     #$0F        ;; match type 0/1/2
+        CMP     #$03
+        BCS     LF922       ;; cannot run this code
+        ROR     A
+        ROR     A
+        AND     #$80        ;; 00 = normal 6502 code, 80 = turbo 6502 code
+        STA     TURFLAG
+        LDY     #$00
+        TYA
+.CLR300
+        STA     $0300, Y    ;; clear b23..b16 of (zp) and (zp),y
+        INY
+        BNE     CLR300
+ELSE
         AND     #$0D
         BNE     LF922
+ENDIF
 
 .LF8FA
         LDA     #$01
@@ -561,12 +589,36 @@ LF85F = LF85D+2
 .LFAEF
         RTS
 
+;;; OSBYTE A=&84 (return top of user memory)
 .LFAF0
+IF _TURBO_
+{
+        BIT     TURFLAG
+        BPL     not_turbo
+        LDA     #$04
+        LDX     #$00
+        LDY     #$00
+        RTS
+.not_turbo
+}
+ENDIF
         LDX     L00F2
         LDY     L00F3
         RTS
 
+;;; OSBYTE A=&83 (return bottom of user memory)
 .LFAF5
+IF _TURBO_
+{
+        BIT     TURFLAG
+        BPL     not_turbo
+        LDA     #$01
+        LDX     #$00
+        LDY     #$00
+        RTS
+.not_turbo
+}
+ENDIF
         LDX     #$00
         LDY     #$08
         RTS
@@ -1407,4 +1459,4 @@ LFE17 = LFE15+2
 
         LFFFF   = LFFFE+1
 
-SAVE "clientrom.bin",$f800,$10000
+SAVE $f800,$10000
