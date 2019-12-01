@@ -61,6 +61,7 @@ EVNTLO  = $0220
 EVNTHI  = $0221
 L0236   = $0236
 L0237   = $0237
+L03F7   = $03F7
 
         ORG     $F800
 
@@ -1097,6 +1098,9 @@ ENDIF
         BPL     LFD9B
 
         LDA     R4DATA
+IF _TURBO_
+        STA     L03F7
+ENDIF
 .LFDA3
         BIT     R4STATUS
         BPL     LFDA3
@@ -1164,6 +1168,81 @@ LFDF9 = LFDF8+1
 
 .LFDFE
         BEQ     LFDE7
+
+IF _TURBO_
+.LFE00
+        PHA
+.LFE01
+        LDA     (L00F6)
+        STA     R3DATA
+        INC     L00F6
+        BNE     done0
+        INC     L00F7
+        BNE     done0
+        INC     L03F7
+.done0
+        PLA
+        RTI
+
+.LFE11
+        PHA
+        LDA     R3DATA
+        STA     (L00F6)
+        INC     L00F6
+        BNE     done1
+        INC     L00F7
+        BNE     done1
+        INC     L03F7
+.done1
+        PLA
+        RTI
+
+.LFE22
+        PHA
+        LDA     (L00F6)
+        STA     R3DATA
+        INC     L00F6
+        BNE     done2a
+        INC     L00F7
+        BNE     done2a
+        INC     L03F7
+
+.done2a
+        LDA     (L00F6)
+        STA     R3DATA
+        INC     L00F6
+        BNE     done2b
+        INC     L00F7
+        BNE     done2b
+        INC     L03F7
+
+.done2b
+        PLA
+        RTI
+
+.LFE41
+        PHA
+        LDA     R3DATA
+        STA     (L00F6)
+        INC     L00F6
+        BNE     done3a
+        INC     L00F7
+        BNE     done3a
+        INC     L03F7
+
+.done3a
+        LDA     R3DATA
+        STA     (L00F6)
+        INC     L00F6
+        BNE     done3b
+        INC     L00F7
+        BNE     done3b
+        INC     L03F7
+.done3b
+        PLA
+        RTI
+
+ELSE
 
 .LFE00
         PHA
@@ -1243,9 +1322,16 @@ LFE17 = LFE15+2
         PLA
         RTI
 
+ENDIF
+
 .LFE60
+IF _TURBO_
+        EQUB    <L00F6
+        EQUB    <L00F6
+ELSE
         EQUB    <LFE02
         EQUB    <LFE16
+ENDIF
         EQUB    <L00F6
         EQUB    <L00F6
         EQUB    <L00F6
@@ -1254,8 +1340,13 @@ LFE17 = LFE15+2
         EQUB    <LFDF9
 
 .LFE68
+IF _TURBO_
+        EQUB    >L00F6
+        EQUB    >L00F6
+ELSE
         EQUB    >LFE02
         EQUB    >LFE16
+ENDIF
         EQUB    >L00F6
         EQUB    >L00F6
         EQUB    >L00F6
