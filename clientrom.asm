@@ -1073,10 +1073,12 @@ ENDIF
         STA     LFFFA
         LDA     LFE78,Y
         STA     LFFFB
+IF NOT(_TURBO_)
         LDA     LFE60,Y
         STA     L00F4
         LDA     LFE68,Y
         STA     L00F5
+ENDIF
 .LFD83
         BIT     R4STATUS
         BPL     LFD83
@@ -1085,9 +1087,11 @@ ENDIF
         CPY     #$05
         BEQ     LFDE7
 
+IF NOT(_TURBO_)
         TYA
         PHA
         LDY     #$01
+ENDIF
 .LFD93
         BIT     R4STATUS
         BPL     LFD93
@@ -1106,14 +1110,22 @@ ENDIF
         BPL     LFDA3
 
         LDA     R4DATA
+IF _TURBO_
+        STA     L00F7
+ELSE
         STA     (L00F4),Y
         DEY
+ENDIF
 .LFDAE
         BIT     R4STATUS
         BPL     LFDAE
 
         LDA     R4DATA
+IF _TURBO_
+        STA     L00F6
+ELSE
         STA     (L00F4),Y
+ENDIF
         BIT     R3DATA
         BIT     R3DATA
 .LFDBE
@@ -1121,8 +1133,12 @@ ENDIF
         BPL     LFDBE
 
         LDA     R4DATA
+IF _TURBO_
+        CPY     #$06
+ELSE
         PLA
         CMP     #$06
+ENDIF
         BCC     LFDE7
 
         BNE     LFDEC
@@ -1133,10 +1149,13 @@ ENDIF
         AND     #$80
         BPL     LFDCF
 
+IF _TURBO_
+        LDA     (L00F6),Y
+ELSE
 .LFDD6
         LDA     LFFFF,Y
 LFDD7 = LFDD6+1
-
+ENDIF
         STA     R3DATA
         INY
         BNE     LFDCF
@@ -1160,9 +1179,13 @@ LFDD7 = LFDD6+1
         BPL     LFDEE
 
         LDA     R3DATA
+IF _TURBO_
+        STA     (L00F6),Y
+ELSE
 .LFDF8
         STA     LFFFF,Y
 LFDF9 = LFDF8+1
+ENDIF
         INY
         BNE     LFDEE
 
@@ -1322,16 +1345,9 @@ LFE17 = LFE15+2
         PLA
         RTI
 
-ENDIF
-
 .LFE60
-IF _TURBO_
-        EQUB    <L00F6
-        EQUB    <L00F6
-ELSE
         EQUB    <LFE02
         EQUB    <LFE16
-ENDIF
         EQUB    <L00F6
         EQUB    <L00F6
         EQUB    <L00F6
@@ -1340,19 +1356,15 @@ ENDIF
         EQUB    <LFDF9
 
 .LFE68
-IF _TURBO_
-        EQUB    >L00F6
-        EQUB    >L00F6
-ELSE
         EQUB    >LFE02
         EQUB    >LFE16
-ENDIF
         EQUB    >L00F6
         EQUB    >L00F6
         EQUB    >L00F6
         EQUB    >L00F6
         EQUB    >LFDD7
         EQUB    >LFDF9
+ENDIF
 
 .LFE70
         EQUB    <LFE00
