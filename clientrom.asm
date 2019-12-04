@@ -61,12 +61,19 @@ EVNTLO  = $0220
 EVNTHI  = $0221
 L0236   = $0236
 L0237   = $0237
+L03EF   = $03EF
 L03F7   = $03F7
+L03F9   = $03F9
+L03FB   = $03FB
+L03FE   = $03FE
 
         ORG     $F800
 
 .RESET
         LDX     #$00
+IF _TURBO_
+        JSR     CLR300
+ENDIF
 .LF802
         LDA     $FF00,X
         STA     $FF00,X
@@ -190,6 +197,10 @@ ENDIF
         LDA     L00F7
         STA     L00EF
         STA     L00F3
+IF _TURBO_
+        STZ     L03EF
+        STZ     L03FE
+ENDIF
         LDY     #$07
         LDA     (L00EE),Y
         CLD
@@ -232,12 +243,7 @@ IF _TURBO_
         ROR     A
         AND     #$80        ;; 00 = normal 6502 code, 80 = turbo 6502 code
         STA     TURFLAG
-        LDY     #$00
-        TYA
-.CLR300
-        STA     $0300, Y    ;; clear b23..b16 of (zp) and (zp),y
-        INY
-        BNE     CLR300
+        JSR     CLR300
 ELSE
         AND     #$0D
         BNE     LF922
@@ -274,6 +280,9 @@ ENDIF
 .LF945
         LDX     #$FF
         TXS
+IF _TURBO_
+        STZ     L03FE
+ENDIF
         JSR     OSNEWL
 
         LDY     #$01
@@ -332,6 +341,9 @@ ENDIF
         LDX     #$00
         STX     L00F0
         STX     L00F1
+IF _TURBO_
+        STZ     L03F9
+ENDIF
 .LF98C
         LDA     (L00F8),Y
         CMP     #$30
@@ -371,6 +383,9 @@ ENDIF
         STY     L00F9
 .LF9B6
         LDY     #$00
+IF _TURBO_
+        STZ     L03F9
+ENDIF
 .LF9B8
         BIT     R2STATUS
         BVC     LF9B8
@@ -389,6 +404,9 @@ ENDIF
         STX     L00F8
         STY     L00F9
         LDY     #$00
+IF _TURBO_
+        STZ     L03F9
+ENDIF
 .LF9D1
         JSR     LF97F
 
@@ -636,6 +654,9 @@ ENDIF
         BEQ     LFB77
 
         PHA
+IF _TURBO_
+        STZ     L03F9
+ENDIF
         LDY     #$08
 .LFB09
         BIT     R2STATUS
@@ -720,6 +741,9 @@ ENDIF
         LDA     #$0A
         JSR     LFC4A
 
+IF _TURBO_
+        STZ     L03F9
+ENDIF
         LDY     #$04
 .LFB7E
         BIT     R2STATUS
@@ -886,6 +910,9 @@ ENDIF
         LDA     #$14
         JSR     LFC4A
 
+IF _TURBO_
+        STZ     L03FB
+ENDIF
         LDY     #$11
 .LFC5F
         LDA     (L00FA),Y
@@ -930,6 +957,9 @@ ENDIF
         LDA     #$16
         JSR     LFC4A
 
+IF _TURBO_
+        STZ     L03FB
+ENDIF
         LDY     #$0C
 .LFC9A
         LDA     (L00FA),Y
@@ -999,6 +1029,9 @@ ENDIF
         LDA     L0104,X
         SBC     #$00
         STA     L00FE
+IF _TURBO_
+        STZ     L03FE
+ENDIF
         PLA
         TAX
         LDA     L00FC
@@ -1410,6 +1443,9 @@ ENDIF
         PLA
         STA     L00FB
         LDY     #$00
+IF _TURBO_
+        STZ     L03FB
+ENDIF
 .LFEA0
         INC     L00FA
         BNE     LFEA6
@@ -1462,6 +1498,16 @@ ENDIF
 
 
 .LFF00
+
+IF _TURBO_
+.CLR300
+        LDX     #$00
+.CLR300LP
+        STZ     $0300, X    ;; clear b23..b16 of (zp) and (zp),y
+        INX
+        BNE     CLR300LP
+        RTS
+ENDIF
 
 .LUNUSED2
         FOR     N,LUNUSED2,$FF7F
