@@ -1,0 +1,37 @@
+cpu 65c02
+load $f800 clientrom.orig
+save clientrom.asm
+symbols clientrom.sym
+
+wordentry $fffa 3
+wordentry $fc0e 27
+word $f974 6
+
+entry $F9F2
+entry $FAE8
+entry $FAEE
+entry $F980
+entry $F81F
+entry $F9B8
+
+string $f833 23
+entry pc
+string $f867
+stringhi $f958
+stringhi $f95b
+stringhi $f960
+stringhi $f965
+stringhi $f96b
+stringhi $f96e
+string $f9dd
+string $f9e8
+string $faaa
+string $fac6
+stringhi $fafe
+entry pc
+string $fc02
+
+entry $ffb9
+
+byte $fbfb 5
+byte $fef8 8
